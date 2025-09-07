@@ -1,39 +1,58 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function Modal({ onClose, onSave }) {
+export default function ModalTelur({ onClose, onSave }) {
   const [rows, setRows] = useState([
-    { tanggal: "", jumlah: "", kualitas: "Baik", kandang: "" },
+    { tanggal: "", jumlah: "", kualitas: "Baik", kandang_id: "" },
   ]);
+  const [kandangList, setKandangList] = useState([]);
 
-  // Tambah baris baru
+  // Fetch daftar kandang
+  useEffect(() => {
+    const fetchKandang = async () => {
+      const { data, error } = await supabase.from("kandang").select("id, nama_kandang");
+      if (error) console.log(error);
+      else setKandangList(data);
+    };
+    fetchKandang();
+  }, []);
+
   const addRow = () => {
-    setRows([...rows, { tanggal: "", jumlah: "", kualitas: "Baik", kandang: "" }]);
+    setRows([...rows, { tanggal: "", jumlah: "", kualitas: "Baik", kandang_id: "" }]);
   };
 
-  // Hapus baris
   const removeRow = (index) => {
     setRows(rows.filter((_, i) => i !== index));
   };
 
-  // Update nilai baris
   const handleChange = (index, field, value) => {
     const newRows = [...rows];
     newRows[index][field] = value;
     setRows(newRows);
   };
 
-  // Submit semua data sekaligus
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Kirim data ke parent
+
+    // Insert ke Supabase
+    const insertRows = rows.map(row => ({
+      tanggal: row.tanggal,
+      jumlah: Number(row.jumlah),
+      kualitas: row.kualitas,
+      kandang_id: Number(row.kandang_id),
+    }));
+
+    const { error } = await supabase.from("telur").insert(insertRows);
+    if (error) console.log(error);
+
     if (onSave) onSave(rows);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl p-6 w-full max-w-3xl shadow-xl space-y-4 overflow-y-auto max-h-[90vh]">
         <h2 className="text-xl font-bold text-green-700">Tambah Data Telur (Banyak)</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -61,7 +80,7 @@ export default function Modal({ onClose, onSave }) {
                   required
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <label className="text-sm font-medium text-gray-700">Kualitas</label>
                 <select
                   value={row.kualitas}
@@ -73,16 +92,19 @@ export default function Modal({ onClose, onSave }) {
                   <option>Buruk</option>
                 </select>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <label className="text-sm font-medium text-gray-700">Kandang</label>
-                <input
-                  type="text"
-                  value={row.kandang}
-                  onChange={(e) => handleChange(idx, "kandang", e.target.value)}
+                <select
+                  value={row.kandang_id}
+                  onChange={(e) => handleChange(idx, "kandang_id", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                  placeholder="A1, B1..."
                   required
-                />
+                >
+                  <option value="">Pilih Kandang</option>
+                  {kandangList.map((k) => (
+                    <option key={k.id} value={k.id}>{k.nama_kandang}</option>
+                  ))}
+                </select>
               </div>
               <div className="col-span-1 flex justify-end">
                 {rows.length > 1 && (

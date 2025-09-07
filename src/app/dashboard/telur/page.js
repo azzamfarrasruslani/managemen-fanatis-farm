@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
 import { supabase } from "@/lib/supabaseClient";
-import ModalTelur from "./components/ModalTelur";
+import ModalTambahTelur from "./components/ModalTambahTelur";
 import TelurHeader from "./components/TelurHeader";
 import TelurFilterBar from "./components/TelurFilterBar";
 import TelurTable from "./components/TelurTable";
@@ -11,49 +10,68 @@ import StatistikRingkasan from "./components/StatistikRingkasan";
 
 export default function ManajemenTelurPage() {
   const [dataTelur, setDataTelur] = useState([]);
+  const [kandangList, setKandangList] = useState([]);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [filterBulan, setFilterBulan] = useState(new Date().getMonth());
+  const [filterTahun, setFilterTahun] = useState(new Date().getFullYear());
+  const [filterKandang, setFilterKandang] = useState("all");
 
-  const today = new Date();
-  const [filterBulan, setFilterBulan] = useState(today.getMonth());
-  const [filterTahun, setFilterTahun] = useState(today.getFullYear());
-
-  const formattedToday = format(today, "yyyy-MM-dd");
-
-  // Fetch data telur dari Supabase
+  // Ambil data telur beserta id dan nama kandang
   const fetchTelur = async () => {
     const { data, error } = await supabase
       .from("telur")
-      .select("*, kandang:kandang_id(nama_kandang)")
+      .select("*, kandang:kandang_id(id, nama_kandang)")
       .order("tanggal", { ascending: false });
-    if (error) console.log(error);
-    else setDataTelur(data);
+    if (!error) setDataTelur(data);
+  };
+
+  const fetchKandang = async () => {
+    const { data, error } = await supabase.from("kandang").select("*");
+    if (!error) setKandangList(data);
   };
 
   useEffect(() => {
     fetchTelur();
+    fetchKandang();
   }, []);
 
-  // ===== Handler Simpan Modal Banyak Data =====
-  const handleSaveModal = () => {
-    fetchTelur();
+  const handleSaveModal = () => { fetchTelur(); };
+
+  const handleEdit = async (item) => {
+    const { error } = await supabase
+      .from("telur")
+      .update({
+        jumlah: item.jumlah,
+        kualitas: item.kualitas,
+        tanggal: item.tanggal
+      })
+      .eq("id", item.id);
+    if (!error) fetchTelur();
   };
 
-  // Filter data untuk table
-  const filteredData = dataTelur
-    .filter(
-      (item) =>
-        item.tanggal.includes(search) ||
-        item.kualitas.toLowerCase().includes(search.toLowerCase()) ||
-        item.kandang?.nama_kandang.toLowerCase().includes(search.toLowerCase())
-    )
-    .filter((item) => {
-      const tgl = new Date(item.tanggal);
-      return (
-        tgl.getMonth() === Number(filterBulan) &&
-        tgl.getFullYear() === Number(filterTahun)
-      );
-    });
+  const handleDelete = async (id) => {
+    const { error } = await supabase
+      .from("telur")
+      .delete()
+      .eq("id", id);
+    if (!error) fetchTelur();
+  };
+
+  // Filter data sesuai bulan, tahun, kandang, dan search
+  const filteredData = dataTelur.filter(item => {
+    const tgl = new Date(item.tanggal);
+    const bulanMatch = tgl.getMonth() === Number(filterBulan);
+    const tahunMatch = tgl.getFullYear() === Number(filterTahun);
+    const kandangMatch =
+      filterKandang === "all" ||
+      item.kandang?.id === Number(filterKandang);
+    const searchMatch =
+      item.tanggal.includes(search) ||
+      item.kualitas.toLowerCase().includes(search.toLowerCase()) ||
+      item.kandang?.nama_kandang.toLowerCase().includes(search.toLowerCase());
+    return bulanMatch && tahunMatch && kandangMatch && searchMatch;
+  });
 
   return (
     <div className="space-y-6">
@@ -66,11 +84,18 @@ export default function ManajemenTelurPage() {
         setFilterBulan={setFilterBulan}
         filterTahun={filterTahun}
         setFilterTahun={setFilterTahun}
+        filterKandang={filterKandang}
+        setFilterKandang={setFilterKandang}
+        kandangList={kandangList}
       />
-      <TelurTable data={filteredData} filterBulan={filterBulan} filterTahun={filterTahun} />
+      <TelurTable
+        data={filteredData}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       {modalOpen && (
-        <ModalTelur
+        <ModalTambahTelur
           onClose={() => setModalOpen(false)}
           onSave={handleSaveModal}
         />

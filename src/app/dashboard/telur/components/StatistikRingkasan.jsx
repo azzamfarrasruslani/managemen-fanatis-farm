@@ -1,13 +1,27 @@
-"use client";
+'use client';
 
 import { FaCalendarAlt, FaSun, FaHistory, FaChartLine } from "react-icons/fa";
 
-export default function StatistikRingkasan({
-  totalBulanIni,
-  jumlahHariIni,
-  jumlahKemarin,
-  rataRataPerHari,
-}) {
+export default function StatistikRingkasan({ dataTelur }) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const totalBulanIni = dataTelur
+    .filter(item => new Date(item.tanggal).getMonth() === today.getMonth())
+    .reduce((sum, item) => sum + item.jumlah, 0);
+
+  const jumlahHariIni = dataTelur
+    .filter(item => new Date(item.tanggal).toDateString() === today.toDateString())
+    .reduce((sum, item) => sum + item.jumlah, 0);
+
+  const jumlahKemarin = dataTelur
+    .filter(item => new Date(item.tanggal).toDateString() === yesterday.toDateString())
+    .reduce((sum, item) => sum + item.jumlah, 0);
+
+  const hariDalamBulan = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const rataRataPerHari = Math.round(totalBulanIni / hariDalamBulan);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatBox
@@ -38,7 +52,6 @@ export default function StatistikRingkasan({
   );
 }
 
-// Komponen StatBox di file yang sama
 function StatBox({ title, value, icon, color = "gray" }) {
   const bgColor = {
     green: "bg-green-100 text-green-800",
@@ -49,16 +62,14 @@ function StatBox({ title, value, icon, color = "gray" }) {
   };
 
   return (
-    <div className="bg-white border-green-200 rounded-xl p-4 shadow-sm">
-      <div className="flex items-center gap-3 mb-2">
-        <div
-          className={`h-10 w-10 flex items-center justify-center rounded-lg text-xl ${bgColor[color]}`}
-        >
-          {icon}
-        </div>
-        <h4 className="text-sm text-gray-600 font-medium">{title}</h4>
+    <div className="bg-white border rounded-xl p-4 shadow-sm flex items-center gap-3">
+      <div className={`h-12 w-12 flex items-center justify-center rounded-lg text-2xl ${bgColor[color]}`}>
+        {icon}
       </div>
-      <p className="text-2xl font-bold text-green-700">{value}</p>
+      <div>
+        <h4 className="text-sm text-gray-600 font-medium">{title}</h4>
+        <p className="text-xl font-bold text-gray-800">{value}</p>
+      </div>
     </div>
   );
 }

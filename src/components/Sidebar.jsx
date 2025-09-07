@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -21,12 +21,32 @@ import { supabase } from "@/lib/supabaseClient";
 const menuItems = [
   { name: "Dashboard", icon: <FaHome />, href: "/dashboard" },
   { name: "Manajemen Telur", icon: <FaEgg />, href: "/dashboard/telur" },
-  { name: "Manajemen Pakan", icon: <FaLeaf />, href: "/dashboard/pakan" },
-  { name: "Manajemen Kandang", icon: <FaWarehouse />, href: "/dashboard/kandang" },
-  { name: "Data Pelanggan", icon: <FaUserFriends />, href: "/dashboard/pelanggan" },
-  { name: "Transaksi", icon: <FaMoneyBillWave />, href: "/dashboard/transaksi" },
-  { name: "Laporan & Statistik", icon: <FaChartLine />, href: "/dashboard/laporan" },
-  { name: "Pengaturan Sistem", icon: <FaUsersCog />, href: "/dashboard/settings" },
+  {
+    name: "Manajemen Kandang",
+    icon: <FaWarehouse />,
+    href: "/dashboard/kandang",
+  },
+  // { name: "Manajemen Pakan", icon: <FaLeaf />, href: "/dashboard/pakan" },
+  // {
+  //   name: "Data Pelanggan",
+  //   icon: <FaUserFriends />,
+  //   href: "/dashboard/pelanggan",
+  // },
+  // {
+  //   name: "Transaksi",
+  //   icon: <FaMoneyBillWave />,
+  //   href: "/dashboard/transaksi",
+  // },
+  // {
+  //   name: "Laporan & Statistik",
+  //   icon: <FaChartLine />,
+  //   href: "/dashboard/laporan",
+  // },
+  {
+    name: "Pengaturan Sistem",
+    icon: <FaUsersCog />,
+    href: "/dashboard/settings",
+  },
 ];
 
 export default function Sidebar() {
@@ -63,7 +83,11 @@ export default function Sidebar() {
           {/* Atas - Logo dan menu */}
           <div>
             <div className="flex justify-center mb-10">
-              <img src="/images/logofanatis.png" alt="Logo Fanatis" className="h-20 object-contain" />
+              <img
+                src="/images/logofanatis.png"
+                alt="Logo Fanatis"
+                className="h-20 object-contain"
+              />
             </div>
             <nav className="space-y-2">
               {menuItems.map((item) => {
@@ -92,7 +116,9 @@ export default function Sidebar() {
               <div className="bg-green-100 text-green-600 p-3 rounded-full inline-block mb-2">
                 <FaUsersCog className="text-xl" />
               </div>
-              <p className="font-semibold text-gray-800 text-sm">Admin Fanatis</p>
+              <p className="font-semibold text-gray-800 text-sm">
+                Admin Fanatis
+              </p>
               <div className="text-xs text-green-600 mt-1 flex items-center justify-center gap-1">
                 <span className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
                 Online

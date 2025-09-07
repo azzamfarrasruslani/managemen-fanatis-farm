@@ -3,24 +3,26 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function ModalTelur({ onClose, onSave }) {
+export default function ModalTambahTelur({ onClose, onSave }) {
   const [rows, setRows] = useState([
-    { tanggal: "", jumlah: "", kualitas: "Baik", kandang_id: "" },
+    { tanggal: "", jumlah: "", kualitas: "Baik", kandang: "" },
   ]);
-  const [kandangList, setKandangList] = useState([]);
+  const [kandangOptions, setKandangOptions] = useState([]);
 
-  // Fetch daftar kandang
+  // Ambil daftar kandang dari Supabase
+  const fetchKandang = async () => {
+    const { data, error } = await supabase
+      .from("kandang")
+      .select("id, nama_kandang");
+    if (!error) setKandangOptions(data);
+  };
+
   useEffect(() => {
-    const fetchKandang = async () => {
-      const { data, error } = await supabase.from("kandang").select("id, nama_kandang");
-      if (error) console.log(error);
-      else setKandangList(data);
-    };
     fetchKandang();
   }, []);
 
   const addRow = () => {
-    setRows([...rows, { tanggal: "", jumlah: "", kualitas: "Baik", kandang_id: "" }]);
+    setRows([...rows, { tanggal: "", jumlah: "", kualitas: "Baik", kandang: "" }]);
   };
 
   const removeRow = (index) => {
@@ -36,26 +38,44 @@ export default function ModalTelur({ onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Insert ke Supabase
-    const insertRows = rows.map(row => ({
-      tanggal: row.tanggal,
-      jumlah: Number(row.jumlah),
-      kualitas: row.kualitas,
-      kandang_id: Number(row.kandang_id),
-    }));
+    // Simpan ke Supabase
+    const { error } = await supabase.from("telur").insert(
+      rows.map(item => ({
+        tanggal: item.tanggal,
+        jumlah: Number(item.jumlah),
+        kualitas: item.kualitas,
+        kandang_id: item.kandang,
+      }))
+    );
 
-    const { error } = await supabase.from("telur").insert(insertRows);
-    if (error) console.log(error);
+    if (!error) {
+      const totalTelur = rows.reduce((sum, item) => sum + Number(item.jumlah), 0);
 
-    if (onSave) onSave(rows);
-    onClose();
+      // Kirim notifikasi ke API route Telegram
+      const message = `🐣 Data Telur Baru Masuk\nTanggal: ${new Date().toLocaleDateString()}\nTotal Telur: ${totalTelur} butir`;
+
+      try {
+        await fetch("/api/telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+      } catch (err) {
+        console.error("Telegram API error:", err);
+      }
+
+      onSave && onSave();
+      onClose && onClose();
+    } else {
+      console.error(error);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl p-6 w-full max-w-3xl shadow-xl space-y-4 overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-xl p-6 w-full max-w-4xl shadow-xl space-y-4 overflow-y-auto max-h-[90vh]">
         <h2 className="text-xl font-bold text-green-700">Tambah Data Telur (Banyak)</h2>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-4 text-black" onSubmit={handleSubmit}>
           {rows.map((row, idx) => (
             <div key={idx} className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-3">
@@ -80,7 +100,7 @@ export default function ModalTelur({ onClose, onSave }) {
                   required
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <label className="text-sm font-medium text-gray-700">Kualitas</label>
                 <select
                   value={row.kualitas}
@@ -92,16 +112,16 @@ export default function ModalTelur({ onClose, onSave }) {
                   <option>Buruk</option>
                 </select>
               </div>
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <label className="text-sm font-medium text-gray-700">Kandang</label>
                 <select
-                  value={row.kandang_id}
-                  onChange={(e) => handleChange(idx, "kandang_id", e.target.value)}
+                  value={row.kandang}
+                  onChange={(e) => handleChange(idx, "kandang", e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
                   required
                 >
                   <option value="">Pilih Kandang</option>
-                  {kandangList.map((k) => (
+                  {kandangOptions.map((k) => (
                     <option key={k.id} value={k.id}>{k.nama_kandang}</option>
                   ))}
                 </select>

@@ -11,7 +11,7 @@ import {
 import { format } from "date-fns";
 import { id as localeID } from "date-fns/locale";
 
-export default function KandangCard({ kandang }) {
+export default function KandangCard({ kandang, onEdit, onDelete }) {
   const isAktif = kandang.status.toLowerCase() === "aktif";
   const isBertelur = kandang.status_telur.toLowerCase() === "bertelur";
 
@@ -91,10 +91,10 @@ export default function KandangCard({ kandang }) {
 
         {/* Tombol aksi */}
         <div className="mt-6 flex justify-end gap-4">
-          <button className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+          <button onClick={onEdit} className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
             Edit
           </button>
-          <button className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+          <button onClick={onDelete} className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition">
             Hapus
           </button>
         </div>

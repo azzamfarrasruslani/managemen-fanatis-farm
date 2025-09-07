@@ -34,10 +34,16 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen w-screen flex items-center justify-center">
-      {/* Background Image */}
-      <div className="absolute inset-0">
+      {/* Background Gambar Paling Belakang */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/images/login-bg.png" // ganti dengan path gambar kamu
+          alt="Background Login"
+          fill
+          className="object-cover"
+        />
         {/* Overlay hitam semi-transparan */}
-        <div className="absolute inset-0 bg-green-800"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       {/* Container Form */}

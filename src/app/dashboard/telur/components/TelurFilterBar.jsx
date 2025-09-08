@@ -1,6 +1,13 @@
-'use client';
+"use client";
 
-import { FaSearch } from "react-icons/fa";
+import {
+  FaSearch,
+  FaChevronDown,
+  FaChevronUp,
+  FaHome,
+  FaDove,
+} from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 
 export default function TelurFilterBar({
   search,
@@ -11,7 +18,7 @@ export default function TelurFilterBar({
   setFilterTahun,
   filterKandang,
   setFilterKandang,
-  kandangList
+  kandangList,
 }) {
   const bulanList = [
     { value: "0", label: "Januari" },
@@ -28,44 +35,113 @@ export default function TelurFilterBar({
     { value: "11", label: "Desember" },
   ];
 
-  const tahunList = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+  const tahunList = Array.from(
+    { length: 5 },
+    (_, i) => new Date().getFullYear() - i
+  );
+
+  const [isBulanOpen, setIsBulanOpen] = useState(false);
+  const [isTahunOpen, setIsTahunOpen] = useState(false);
+  const [isKandangOpen, setIsKandangOpen] = useState(false);
+
+  const bulanRef = useRef(null);
+  const tahunRef = useRef(null);
+  const kandangRef = useRef(null);
+
+  // Tutup dropdown jika klik di luar
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (bulanRef.current && !bulanRef.current.contains(event.target))
+        setIsBulanOpen(false);
+      if (tahunRef.current && !tahunRef.current.contains(event.target))
+        setIsTahunOpen(false);
+      if (kandangRef.current && !kandangRef.current.contains(event.target))
+        setIsKandangOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const renderDropdown = (
+    isOpen,
+    setIsOpen,
+    ref,
+    items,
+    selectedValue,
+    onSelect,
+    labelKey = "label"
+  ) => (
+    <div className="relative w-40" ref={ref}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex justify-between items-center px-4 py-2 text-sm bg-green-50 text-green-800 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 font-medium transition"
+      >
+        {items.find((i) => i.value.toString() === selectedValue)?.[labelKey] ||
+          "Pilih"}
+        {isOpen ? (
+          <FaChevronUp className="ml-2" />
+        ) : (
+          <FaChevronDown className="ml-2" />
+        )}
+      </button>
+      {isOpen && (
+        <ul className="absolute z-50 w-full bg-white border border-gray-300 text-black rounded-lg mt-1 shadow-md max-h-40 overflow-auto">
+          {items.map((item) => (
+            <li
+              key={item.value}
+              onClick={() => {
+                onSelect(item.value);
+                setIsOpen(false);
+              }}
+              className={`px-4 py-2 cursor-pointer hover:bg-green-100 flex items-center ${
+                selectedValue.toString() === item.value.toString()
+                  ? "bg-green-100 font-semibold"
+                  : ""
+              }`}
+            >
+              {item[labelKey]}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 
   return (
-    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-md border border-gray-200">
       <div className="flex items-center gap-3 flex-wrap">
         <label className="text-sm font-semibold text-gray-800">Bulan:</label>
-        <select
-          value={filterBulan}
-          onChange={(e) => setFilterBulan(e.target.value)}
-          className="text-sm px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50 text-green-800 font-medium transition"
-        >
-          {bulanList.map((b) => (
-            <option key={b.value} value={b.value}>{b.label}</option>
-          ))}
-        </select>
+        {renderDropdown(
+          isBulanOpen,
+          setIsBulanOpen,
+          bulanRef,
+          bulanList,
+          filterBulan,
+          setFilterBulan
+        )}
 
         <label className="text-sm font-semibold text-gray-800">Tahun:</label>
-        <select
-          value={filterTahun}
-          onChange={(e) => setFilterTahun(e.target.value)}
-          className="text-sm px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50 text-green-800 font-medium transition"
-        >
-          {tahunList.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
+        {renderDropdown(
+          isTahunOpen,
+          setIsTahunOpen,
+          tahunRef,
+          tahunList.map((t) => ({ value: t, label: t })),
+          filterTahun,
+          setFilterTahun
+        )}
 
         <label className="text-sm font-semibold text-gray-800">Kandang:</label>
-        <select
-          value={filterKandang}
-          onChange={(e) => setFilterKandang(e.target.value)}
-          className="text-sm px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50 text-green-800 font-medium transition"
-        >
-          <option value="all">Semua Kandang</option>
-          {kandangList.map((k) => (
-            <option key={k.id} value={k.id.toString()}>{k.nama_kandang}</option>
-          ))}
-        </select>
+        {renderDropdown(
+          isKandangOpen,
+          setIsKandangOpen,
+          kandangRef,
+          [
+            { value: "all", label: "Semua Kandang" },
+            ...kandangList.map((k) => ({ value: k.id, label: k.nama_kandang })),
+          ],
+          filterKandang,
+          setFilterKandang
+        )}
       </div>
 
       <div className="relative w-full md:w-80">

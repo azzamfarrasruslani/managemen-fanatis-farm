@@ -1,13 +1,6 @@
-"use client";
+'use client';
 
-import {
-  FaEgg,
-  FaCalendarAlt,
-  FaDrumstickBite,
-  FaWarehouse,
-  FaHome,
-  FaDove,
-} from "react-icons/fa";
+import { FaEgg, FaCalendarAlt, FaDrumstickBite, FaWarehouse, FaHome, FaDove, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { format } from "date-fns";
 import { id as localeID } from "date-fns/locale";
 
@@ -15,28 +8,22 @@ export default function KandangCard({ kandang, onEdit, onDelete }) {
   const isAktif = kandang.status.toLowerCase() === "aktif";
   const isBertelur = kandang.status_telur.toLowerCase() === "bertelur";
 
-  const tanggalFormatted = format(
-    new Date(kandang.tanggal_masuk),
-    "dd MMMM yyyy",
-    { locale: localeID }
-  );
+  const tanggalFormatted = format(new Date(kandang.tanggal_masuk), "dd MMMM yyyy", { locale: localeID });
 
   return (
-    <div className="relative bg-white border border-gray-100 rounded-xl p-6 shadow-md overflow-hidden transition duration-300">
+    <div className="relative bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition duration-300 overflow-hidden group">
       {/* Siluet ikon warehouse besar di kanan bawah */}
-      <div className="absolute bottom-[-20px] right-[-20px] opacity-10 z-0">
+      <div className="absolute bottom-[-25px] right-[-25px] opacity-10 z-0">
         <FaWarehouse className="text-green-400 text-[180px]" />
       </div>
 
-      {/* Konten utama dengan z-index lebih tinggi */}
+      {/* Konten utama */}
       <div className="relative z-10">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <FaHome className="text-green-800 text-xl" />
-            <h2 className="text-2xl font-extrabold text-green-800">
-              {kandang.nama_kandang}
-            </h2>
+            <h2 className="text-2xl font-extrabold text-green-800">{kandang.nama_kandang}</h2>
           </div>
           <span
             className={`text-xs px-3 py-1 rounded-full font-semibold ${
@@ -70,11 +57,7 @@ export default function KandangCard({ kandang, onEdit, onDelete }) {
             <FaEgg className={isBertelur ? "text-yellow-500" : "text-gray-300"} />
             <span>
               <strong>Status Telur:</strong>{" "}
-              <span
-                className={`font-semibold ${
-                  isBertelur ? "text-yellow-700" : "text-gray-500"
-                }`}
-              >
+              <span className={`font-semibold ${isBertelur ? "text-yellow-700" : "text-gray-500"}`}>
                 {kandang.status_telur}
               </span>
             </span>
@@ -89,13 +72,21 @@ export default function KandangCard({ kandang, onEdit, onDelete }) {
           </div>
         </div>
 
-        {/* Tombol aksi */}
-        <div className="mt-6 flex justify-end gap-4">
-          <button onClick={onEdit} className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-            Edit
+        {/* Tombol aksi (ikon saja) */}
+        <div className="mt-6 flex justify-end gap-3 ">
+          <button
+            onClick={onEdit}
+            className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition shadow-md"
+            title="Edit"
+          >
+            <FaEdit />
           </button>
-          <button onClick={onDelete} className="flex items-center gap-2 px-5 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition">
-            Hapus
+          <button
+            onClick={onDelete}
+            className="p-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition shadow-md"
+            title="Hapus"
+          >
+            <FaTrashAlt />
           </button>
         </div>
       </div>

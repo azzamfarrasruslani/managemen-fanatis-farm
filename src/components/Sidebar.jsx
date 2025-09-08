@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FaBars,
   FaEgg,
@@ -13,9 +13,8 @@ import {
   FaSignOutAlt,
   FaTimes,
   FaWarehouse,
-  FaUserFriends,
-  FaMoneyBillWave,
 } from "react-icons/fa";
+import { LuWheat } from "react-icons/lu";
 import { supabase } from "@/lib/supabaseClient";
 
 const menuItems = [
@@ -26,7 +25,11 @@ const menuItems = [
     icon: <FaWarehouse />,
     href: "/dashboard/kandang",
   },
-  // { name: "Manajemen Pakan", icon: <FaLeaf />, href: "/dashboard/pakan" },
+  {
+    name: "Manajemen Pakan",
+    icon: <LuWheat />,
+    href: "/dashboard/pakan",
+  },
   // {
   //   name: "Data Pelanggan",
   //   icon: <FaUserFriends />,
@@ -42,17 +45,20 @@ const menuItems = [
   //   icon: <FaChartLine />,
   //   href: "/dashboard/laporan",
   // },
-  {
-    name: "Pengaturan Sistem",
-    icon: <FaUsersCog />,
-    href: "/dashboard/settings",
-  },
+  // {
+  //   name: "Pengaturan Sistem",
+  //   icon: <FaUsersCog />,
+  //   href: "/dashboard/settings",
+  // },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
+  const sidebarRef = useRef(null);
+  const toggleButtonRef = useRef(null);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -63,10 +69,29 @@ export default function Sidebar() {
     }
   };
 
+  // Tutup sidebar saat klik di luar
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        toggleButtonRef.current &&
+        !toggleButtonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {/* Tombol toggle mobile */}
       <button
+        ref={toggleButtonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="md:hidden fixed top-4 left-4 z-50 bg-green-600 text-white p-2 rounded-md shadow"
       >
@@ -75,6 +100,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
+        ref={sidebarRef}
         className={`fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 z-40 transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}

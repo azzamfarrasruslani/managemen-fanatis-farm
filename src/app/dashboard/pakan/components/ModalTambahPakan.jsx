@@ -6,9 +6,9 @@ export default function ModalTambahPakan({ onClose, onSuccess }) {
   const [form, setForm] = useState({
     nama: "",
     jenis: "Pakan",
-    stok: 0,
+    stok: "", // string untuk input numeric
     satuan: "kg",
-    hargaperunit: 0, // sesuai nama kolom database
+    hargaperunit: "", // string untuk input numeric
     kadaluarsa: "",
     status: "Tersedia",
     supplier: "",
@@ -18,11 +18,19 @@ export default function ModalTambahPakan({ onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // konversi numeric sebelum dikirim ke server
+    const payload = {
+      ...form,
+      stok: Number(form.stok),
+      hargaperunit: Number(form.hargaperunit),
+    };
+
     try {
       const res = await fetch("/api/pakan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
@@ -69,7 +77,6 @@ export default function ModalTambahPakan({ onClose, onSuccess }) {
                 <option value="Pakan">Pakan</option>
                 <option value="Obat">Obat</option>
               </select>
-              <p className="text-gray-500 text-xs mt-1">Pilih jenis item</p>
             </div>
             <div>
               <label className="block text-gray-700 font-medium mb-1">Supplier</label>
@@ -92,7 +99,7 @@ export default function ModalTambahPakan({ onClose, onSuccess }) {
                 placeholder="Jumlah stok"
                 className="w-full p-2 border rounded text-gray-800 focus:ring-2 focus:ring-green-400"
                 value={form.stok}
-                onChange={(e) => setForm({ ...form, stok: Number(e.target.value) })}
+                onChange={(e) => setForm({ ...form, stok: e.target.value })}
               />
             </div>
             <div>
@@ -116,7 +123,7 @@ export default function ModalTambahPakan({ onClose, onSuccess }) {
                 placeholder="Harga per unit"
                 className="w-full p-2 border rounded text-gray-800 focus:ring-2 focus:ring-green-400"
                 value={form.hargaperunit}
-                onChange={(e) => setForm({ ...form, hargaperunit: Number(e.target.value) })}
+                onChange={(e) => setForm({ ...form, hargaperunit: e.target.value })}
               />
             </div>
             <div>

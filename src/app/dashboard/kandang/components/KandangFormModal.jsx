@@ -15,6 +15,7 @@ export default function KandangFormModal({
     status_telur: "Bertelur",
     jenis_bebek: "",
     tanggal_masuk: "",
+    pakan_per_hari: 0, // <--- Tambahkan kolom baru di state
   });
 
   const modalRef = useRef();
@@ -68,6 +69,7 @@ export default function KandangFormModal({
           {editData ? "Edit Kandang" : "Tambah Kandang"}
         </h2>
 
+        {/* Nama Kandang */}
         <div className="space-y-2 text-black">
           <label className="font-medium text-gray-700">Nama Kandang</label>
           <input
@@ -81,6 +83,7 @@ export default function KandangFormModal({
           />
         </div>
 
+        {/* Jumlah Bebek */}
         <div className="space-y-2">
           <label className="font-medium text-gray-700">Jumlah Bebek</label>
           <input
@@ -94,6 +97,7 @@ export default function KandangFormModal({
           />
         </div>
 
+        {/* Status Kandang */}
         <div className="space-y-2">
           <label className="font-medium text-gray-700">Status Kandang</label>
           <select
@@ -107,6 +111,7 @@ export default function KandangFormModal({
           </select>
         </div>
 
+        {/* Status Telur */}
         <div className="space-y-2">
           <label className="font-medium text-gray-700">Status Telur</label>
           <select
@@ -120,6 +125,7 @@ export default function KandangFormModal({
           </select>
         </div>
 
+        {/* Jenis Bebek */}
         <div className="space-y-2">
           <label className="font-medium text-gray-700">Jenis Bebek</label>
           <input
@@ -133,6 +139,7 @@ export default function KandangFormModal({
           />
         </div>
 
+        {/* Tanggal Masuk */}
         <div className="space-y-2">
           <label className="font-medium text-gray-700">Tanggal Masuk</label>
           <input
@@ -145,6 +152,21 @@ export default function KandangFormModal({
           />
         </div>
 
+        {/* Pakan per Hari */}
+        <div className="space-y-2">
+          <label className="font-medium text-gray-700">Pakan / Hari (kg)</label>
+          <input
+            type="number"
+            name="pakan_per_hari"
+            placeholder="Contoh: 5"
+            value={form.pakan_per_hari}
+            onChange={handleChange}
+            required
+            className="w-full border text-black border-gray-300 p-2 rounded focus:ring-2 focus:ring-green-400 focus:outline-none"
+          />
+        </div>
+
+        {/* Tombol */}
         <div className="flex justify-end gap-3 mt-4">
           <button
             type="button"

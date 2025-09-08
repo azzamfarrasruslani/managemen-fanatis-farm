@@ -47,7 +47,8 @@ export default function PakanTable({ data, onEdit, onDelete, onAddStok, onPakaiP
                   <span className="font-semibold">{item.stok}</span>
                   <span className="text-gray-500 text-xs">{item.satuan}</span>
                 </td>
-                <td className="px-6 py-4 font-medium">{formatRupiah(item.hargaPerUnit)}</td>
+                <td className="px-6 py-4 font-medium">{formatRupiah(Number(item.hargaperunit) || 0)}</td>
+
                 <td className="px-6 py-4 text-gray-600">{item.deskripsi}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">

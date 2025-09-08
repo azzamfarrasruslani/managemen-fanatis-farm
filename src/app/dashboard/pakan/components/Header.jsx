@@ -1,9 +1,12 @@
 'use client';
 
-import { FaPlusCircle } from "react-icons/fa";
+import { FaPlusCircle, FaClipboardList } from "react-icons/fa";
 import { LuWheat } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 export default function Header({ onTambah }) {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-between flex-wrap gap-4">
       <div>
@@ -14,12 +17,20 @@ export default function Header({ onTambah }) {
           Kelola stok dan informasi penggunaan pakan serta obat bebek Fanatis Farm.
         </p>
       </div>
-      <button
-        onClick={onTambah}
-        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition"
-      >
-        <FaPlusCircle /> Tambah Item
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={onTambah}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition"
+        >
+          <FaPlusCircle /> Tambah Item
+        </button>
+        <button
+          onClick={() => router.push("/dashboard/pakan/log")}
+          className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition"
+        >
+          <FaClipboardList /> Lihat Log Pakan
+        </button>
+      </div>
     </div>
   );
 }

@@ -89,14 +89,14 @@ export default function TelurTable({ data, onEdit, onDelete }) {
                       className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs font-medium transition-all duration-200"
                       title="Edit data telur"
                     >
-                      <FaEdit /> Edit
+                      <FaEdit /> 
                     </button>
                     <button
                       onClick={() => { setSelectedItem(item); setModalHapus(true); }}
                       className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs font-medium transition-all duration-200"
                       title="Hapus data telur"
                     >
-                      <FaTrash /> Hapus
+                      <FaTrash /> 
                     </button>
                   </td>
                 </tr>

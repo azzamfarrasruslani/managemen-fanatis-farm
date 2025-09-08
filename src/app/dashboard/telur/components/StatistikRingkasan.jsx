@@ -1,26 +1,35 @@
 'use client';
 
-import { FaCalendarAlt, FaSun, FaHistory, FaChartLine } from "react-icons/fa";
+import { FaCalendarAlt, FaSun, FaChartLine, FaWarehouse } from "react-icons/fa";
 
 export default function StatistikRingkasan({ dataTelur }) {
   const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
 
+  // Total Bulan Ini
   const totalBulanIni = dataTelur
     .filter(item => new Date(item.tanggal).getMonth() === today.getMonth())
     .reduce((sum, item) => sum + item.jumlah, 0);
 
-  const jumlahHariIni = dataTelur
-    .filter(item => new Date(item.tanggal).toDateString() === today.toDateString())
-    .reduce((sum, item) => sum + item.jumlah, 0);
+  // Jumlah Hari Ini
+  const telurHariIni = dataTelur.filter(
+    item => new Date(item.tanggal).toDateString() === today.toDateString()
+  );
+  const jumlahHariIni = telurHariIni.reduce((sum, item) => sum + item.jumlah, 0);
 
-  const jumlahKemarin = dataTelur
-    .filter(item => new Date(item.tanggal).toDateString() === yesterday.toDateString())
-    .reduce((sum, item) => sum + item.jumlah, 0);
+  // Persentase telur hari ini berdasarkan jumlah bebek di kandang
+  const totalBebekHariIni = telurHariIni.reduce((sum, item) => sum + (item.kandang?.jumlah_bebek || 0), 0);
+  const persentaseHariIni = totalBebekHariIni > 0 
+    ? ((jumlahHariIni / totalBebekHariIni) * 100).toFixed(2)
+    : 0;
 
-  const hariDalamBulan = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const rataRataPerHari = Math.round(totalBulanIni / hariDalamBulan);
+  // Kandang Terproduktif
+  const kandangMap = {};
+  dataTelur.forEach(item => {
+    const kName = item.kandang?.nama_kandang || "Tidak diketahui";
+    if (!kandangMap[kName]) kandangMap[kName] = 0;
+    kandangMap[kName] += item.jumlah;
+  });
+  const kandangTerproduktif = Object.entries(kandangMap).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -37,15 +46,15 @@ export default function StatistikRingkasan({ dataTelur }) {
         color="yellow"
       />
       <StatBox
-        title="Kemarin"
-        value={`${jumlahKemarin} Butir`}
-        icon={<FaHistory />}
+        title="Persentase Telur Hari Ini"
+        value={`${persentaseHariIni}%`}
+        icon={<FaChartLine />}
         color="emerald"
       />
       <StatBox
-        title="Rata-rata / Hari"
-        value={`${rataRataPerHari} Butir`}
-        icon={<FaChartLine />}
+        title="Kandang Terproduktif"
+        value={kandangTerproduktif}
+        icon={<FaWarehouse />}
         color="lime"
       />
     </div>

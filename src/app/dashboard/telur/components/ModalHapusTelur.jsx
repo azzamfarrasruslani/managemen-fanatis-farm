@@ -10,7 +10,7 @@ export default function ModalHapusTelur({ item, onClose, onDelete }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl space-y-4">
+      <div className="bg-white text-black rounded-xl p-6 w-full max-w-sm shadow-xl space-y-4">
         <h2 className="text-xl font-bold text-red-600">Hapus Data Telur</h2>
         <p>Apakah Anda yakin ingin menghapus data telur dari kandang <strong>{item?.kandang?.nama_kandang}</strong> tanggal <strong>{item?.tanggal}</strong>?</p>
 

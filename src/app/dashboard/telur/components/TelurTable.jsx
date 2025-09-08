@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
-import { FaEdit, FaTrash, FaCircle } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEgg } from "react-icons/fa";
 import ModalEditTelur from "./ModalEditTelur";
 import ModalHapusTelur from "./ModalHapusTelur";
 
@@ -62,7 +62,7 @@ export default function TelurTable({ data, onEdit, onDelete }) {
                   {/* Jumlah telur */}
                   <td className="px-4 py-3 border-r border-gray-300 text-center">
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-sm">
-                      <FaCircle className="text-yellow-600 text-xs" /> {item.jumlah}
+                     <FaEgg className="text-yellow-500" /> {item.jumlah}
                     </span>
                   </td>
 

@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-export default function StatCard({ title, value, icon, color = "green" }) {
+// StatCard.jsx
+export default function StatCard({ title, value, icon, color = "green", subtitle }) {
   const bgColor = {
     green: "bg-green-100 text-green-800",
     yellow: "bg-yellow-100 text-yellow-800",
@@ -20,6 +21,7 @@ export default function StatCard({ title, value, icon, color = "green" }) {
       <div className="flex flex-col">
         <span className="text-sm text-gray-600 font-medium">{title}</span>
         <span className="text-xl font-bold text-gray-800">{value}</span>
+        {subtitle && <span className="text-xs text-gray-400">{subtitle}</span>}
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
-export default function StatCard({ title, value, icon, color = "gray" }) {
+"use client";
+
+export default function StatCard({ title, value, icon, color = "gray", subtitle }) {
   const bgColor = {
     green: "bg-green-100 text-green-800",
     yellow: "bg-yellow-100 text-yellow-800",
@@ -22,9 +24,10 @@ export default function StatCard({ title, value, icon, color = "gray" }) {
       <h3 className="text-sm text-gray-500 font-medium">{title}</h3>
 
       {/* Nilai */}
-      <p className="text-2xl font-extrabold text-gray-800 tracking-tight">
-        {value}
-      </p>
+      <p className="text-2xl font-extrabold text-gray-800 tracking-tight">{value}</p>
+
+      {/* Subtitle / Keterangan */}
+      {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
     </div>
   );
 }

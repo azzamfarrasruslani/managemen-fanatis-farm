@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
+    "axios": "^1.11.0",
     "chart.js": "^4.5.0",
     "date-fn": "^0.0.2",
     "date-fns": "^4.1.0",

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
-import { FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaEdit, FaTrash, FaCircle } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCircle } from "react-icons/fa";
 import ModalEditTelur from "./ModalEditTelur";
 import ModalHapusTelur from "./ModalHapusTelur";
 
@@ -15,34 +15,12 @@ export default function TelurTable({ data, onEdit, onDelete }) {
   if (!data || data.length === 0)
     return <p className="text-gray-500 text-center mt-10">Tidak ada data telur</p>;
 
-  // Badge warna berdasarkan kualitas
-  const getBadgeColor = (kualitas) => {
-    switch (kualitas.toLowerCase()) {
-      case "baik": return "bg-green-200 text-green-900";
-      case "sedang": return "bg-yellow-200 text-yellow-900";
-      case "buruk": return "bg-red-200 text-red-900";
-      default: return "bg-gray-200 text-gray-800";
-    }
-  };
-
-  // Ikon kualitas
-  const getKualitasIcon = (kualitas) => {
-    switch (kualitas.toLowerCase()) {
-      case "baik": return <FaCheckCircle className="inline text-green-700" />;
-      case "sedang": return <FaExclamationTriangle className="inline text-yellow-700" />;
-      case "buruk": return <FaTimesCircle className="inline text-red-700" />;
-      default: return null;
-    }
-  };
-
   return (
     <>
-      {/* Indikator jumlah data */}
       <div className="text-sm text-gray-700 mb-2">
         Menampilkan {data.length} data
       </div>
 
-      {/* Tabel responsif */}
       <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-300">
         <table className="min-w-full divide-y divide-gray-300 bg-white border-collapse">
           <thead className="bg-green-600 text-white text-sm sticky top-0 z-10">
@@ -50,7 +28,8 @@ export default function TelurTable({ data, onEdit, onDelete }) {
               <th className="px-4 py-3 text-left whitespace-nowrap">Tanggal</th>
               <th className="px-4 py-3 text-left whitespace-nowrap">Kandang</th>
               <th className="px-4 py-3 text-left whitespace-nowrap">Jumlah</th>
-              <th className="px-4 py-3 text-left whitespace-nowrap">Kualitas</th>
+              <th className="px-4 py-3 text-left whitespace-nowrap">Persentase Telur (%)</th>
+              <th className="px-4 py-3 text-left whitespace-nowrap">Keterangan</th>
               <th className="px-4 py-3 text-left whitespace-nowrap">Aksi</th>
             </tr>
           </thead>
@@ -85,14 +64,14 @@ export default function TelurTable({ data, onEdit, onDelete }) {
                     <FaCircle className="text-yellow-600" /> {item.jumlah}
                   </td>
 
-                  {/* Kualitas */}
-                  <td className="px-4 py-3 border-r border-gray-300 text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${getBadgeColor(item.kualitas)} flex items-center justify-center gap-1`}
-                      title={`Kualitas: ${item.kualitas}`}
-                    >
-                      {getKualitasIcon(item.kualitas)} {item.kualitas}
-                    </span>
+                  {/* Persentase telur */}
+                  <td className="px-4 py-3 border-r border-gray-300 text-center font-semibold">
+                    {item.persentase_telur}%
+                  </td>
+
+                  {/* Keterangan */}
+                  <td className="px-4 py-3 border-r border-gray-300 text-left">
+                    {item.keterangan || "-"}
                   </td>
 
                   {/* Aksi */}
@@ -119,15 +98,16 @@ export default function TelurTable({ data, onEdit, onDelete }) {
         </table>
       </div>
 
-      {/* Modal */}
+      {/* Modal Edit */}
       {modalEdit && selectedItem && (
         <ModalEditTelur
-          data={[selectedItem]}
+          data={selectedItem} // langsung object
           onClose={() => setModalEdit(false)}
           onEdit={onEdit}
         />
       )}
 
+      {/* Modal Hapus */}
       {modalHapus && selectedItem && (
         <ModalHapusTelur
           item={selectedItem}

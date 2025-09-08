@@ -13,6 +13,7 @@ const dummyPakanObat = [
     jenis: "Pakan",
     stok: 50,
     satuan: "kg",
+    hargaPerUnit: 12000, // harga per kg
     kadaluarsa: "2025-12-31",
     status: "Tersedia",
     supplier: "PT Pakan Sejahtera",
@@ -25,6 +26,7 @@ const dummyPakanObat = [
     jenis: "Obat",
     stok: 15,
     satuan: "botol",
+    hargaPerUnit: 45000, // harga per botol
     kadaluarsa: "2026-01-15",
     status: "Tersedia",
     supplier: "PT Medika Farma",
@@ -37,6 +39,7 @@ const dummyPakanObat = [
     jenis: "Pakan",
     stok: 80,
     satuan: "kg",
+    hargaPerUnit: 8000, // harga per kg
     kadaluarsa: "2025-11-30",
     status: "Tersedia",
     supplier: "Petani Lokal",
@@ -44,6 +47,7 @@ const dummyPakanObat = [
     deskripsi: "Sumber energi utama pakan campuran. Diberikan 40% dari total pakan.",
   },
 ];
+
 
 export default function ManajemenPakanPage() {
   const [data, setData] = useState(dummyPakanObat);

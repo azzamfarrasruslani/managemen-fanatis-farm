@@ -17,8 +17,8 @@ export default function TelurTable({ data, onEdit, onDelete }) {
 
   return (
     <>
-      <div className="text-sm text-gray-700 mb-2">
-        Menampilkan {data.length} data
+      <div className="text-sm text-gray-700 mb-4 font-medium">
+        Menampilkan <span className="font-bold">{data.length}</span> data telur
       </div>
 
       <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-300">
@@ -27,10 +27,10 @@ export default function TelurTable({ data, onEdit, onDelete }) {
             <tr>
               <th className="px-4 py-3 text-left whitespace-nowrap">Tanggal</th>
               <th className="px-4 py-3 text-left whitespace-nowrap">Kandang</th>
-              <th className="px-4 py-3 text-left whitespace-nowrap">Jumlah</th>
-              <th className="px-4 py-3 text-left whitespace-nowrap">Persentase Telur (%)</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Jumlah</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Persentase</th>
               <th className="px-4 py-3 text-left whitespace-nowrap">Keterangan</th>
-              <th className="px-4 py-3 text-left whitespace-nowrap">Aksi</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Aksi</th>
             </tr>
           </thead>
 
@@ -40,37 +40,45 @@ export default function TelurTable({ data, onEdit, onDelete }) {
               const hari = format(tanggalObj, 'EEE', { locale: id });
               const tanggalFormatted = format(tanggalObj, 'dd MMM yyyy', { locale: id });
 
+              // Warna baris alternate
+              const rowBg = idx % 2 === 0 ? "bg-green-50" : "bg-white";
+
               return (
                 <tr
                   key={idx}
-                  className={`transition duration-300 ${idx % 2 === 0 ? "bg-green-50" : "bg-white"} hover:bg-green-100 hover:shadow-md`}
+                  className={`transition duration-300 ${rowBg} hover:bg-green-100 hover:shadow-md`}
                 >
                   {/* Tanggal */}
                   <td className="px-4 py-3 border-r border-gray-300">
                     <div className="text-xs text-gray-500">{hari}</div>
-                    <div className="mt-1 text-gray-800 font-semibold text-sm">{tanggalFormatted}</div>
+                    <div className="mt-1 font-semibold text-gray-800">{tanggalFormatted}</div>
                   </td>
 
                   {/* Kandang */}
-                  <td
-                    className="px-4 py-3 border-r border-gray-300 font-medium"
-                    title={`Kandang: ${item.kandang?.nama_kandang || "Tidak diketahui"}`}
-                  >
+                  <td className="px-4 py-3 border-r border-gray-300 font-medium text-gray-700">
                     {item.kandang?.nama_kandang || "Tidak diketahui"}
                   </td>
 
                   {/* Jumlah telur */}
-                  <td className="px-4 py-3 border-r border-gray-300 text-center font-semibold text-green-700 flex items-center justify-center gap-1">
-                    <FaCircle className="text-yellow-600" /> {item.jumlah}
+                  <td className="px-4 py-3 border-r border-gray-300 text-center">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-sm">
+                      <FaCircle className="text-yellow-600 text-xs" /> {item.jumlah}
+                    </span>
                   </td>
 
                   {/* Persentase telur */}
-                  <td className="px-4 py-3 border-r border-gray-300 text-center font-semibold">
-                    {item.persentase_telur}%
+                  <td className="px-4 py-3 border-r border-gray-300 text-center">
+                    <span className={`inline-block px-2 py-1 rounded-full font-semibold text-sm
+                      ${item.persentase_telur >= 80 ? "bg-green-100 text-green-800" :
+                        item.persentase_telur >= 50 ? "bg-yellow-100 text-yellow-800" :
+                        "bg-red-100 text-red-800"}
+                    `}>
+                      {item.persentase_telur}%
+                    </span>
                   </td>
 
                   {/* Keterangan */}
-                  <td className="px-4 py-3 border-r border-gray-300 text-left">
+                  <td className="px-4 py-3 border-r border-gray-300 text-gray-600">
                     {item.keterangan || "-"}
                   </td>
 
@@ -78,14 +86,14 @@ export default function TelurTable({ data, onEdit, onDelete }) {
                   <td className="px-4 py-3 flex gap-2 justify-center">
                     <button
                       onClick={() => { setSelectedItem(item); setModalEdit(true); }}
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs transition-all duration-200"
+                      className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs font-medium transition-all duration-200"
                       title="Edit data telur"
                     >
                       <FaEdit /> Edit
                     </button>
                     <button
                       onClick={() => { setSelectedItem(item); setModalHapus(true); }}
-                      className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs transition-all duration-200"
+                      className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs font-medium transition-all duration-200"
                       title="Hapus data telur"
                     >
                       <FaTrash /> Hapus
@@ -101,7 +109,7 @@ export default function TelurTable({ data, onEdit, onDelete }) {
       {/* Modal Edit */}
       {modalEdit && selectedItem && (
         <ModalEditTelur
-          data={selectedItem} // langsung object
+          data={selectedItem}
           onClose={() => setModalEdit(false)}
           onEdit={onEdit}
         />

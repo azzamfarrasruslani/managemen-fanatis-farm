@@ -1,8 +1,8 @@
 'use client';
 
-import { FaPills, FaLeaf, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaPills, FaLeaf, FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 
-export default function PakanTable({ data }) {
+export default function PakanTable({ data, onEdit, onDelete, onAddStok, onPakaiPakan }) {
   const getJenisIcon = (jenis) =>
     jenis === "Pakan" ? (
       <FaLeaf className="text-green-600 mr-1" />
@@ -43,15 +43,21 @@ export default function PakanTable({ data }) {
                     {item.jenis}
                   </span>
                 </td>
-                <td className="px-6 py-4">{item.stok} {item.satuan}</td>
+                <td className="px-6 py-4 flex items-center gap-2">
+                  <span className="font-semibold">{item.stok}</span>
+                  <span className="text-gray-500 text-xs">{item.satuan}</span>
+                </td>
                 <td className="px-6 py-4 font-medium">{formatRupiah(item.hargaPerUnit)}</td>
                 <td className="px-6 py-4 text-gray-600">{item.deskripsi}</td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <button className="p-2 text-blue-600 hover:text-blue-800 transition">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => onPakaiPakan(item)} className="p-2 text-green-600 hover:text-green-800 transition" title="Pakai Pakan">
+                      <FaPlus />
+                    </button>
+                    <button onClick={() => onEdit(item)} className="p-2 text-blue-600 hover:text-blue-800 transition" title="Edit">
                       <FaEdit />
                     </button>
-                    <button className="p-2 text-red-600 hover:text-red-800 transition">
+                    <button onClick={() => onDelete(item)} className="p-2 text-red-600 hover:text-red-800 transition" title="Hapus">
                       <FaTrashAlt />
                     </button>
                   </div>

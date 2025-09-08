@@ -14,7 +14,6 @@ export default function PakanFilterBar({ search, setSearch, filterJenis, setFilt
     return <FaList className="inline mr-2 text-gray-600" />;
   };
 
-  // Tutup dropdown jika klik di luar
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -22,9 +21,7 @@ export default function PakanFilterBar({ search, setSearch, filterJenis, setFilt
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSelect = (jenis) => {
@@ -34,7 +31,6 @@ export default function PakanFilterBar({ search, setSearch, filterJenis, setFilt
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-md border border-gray-200 flex flex-col md:flex-row items-start md:items-center gap-4 w-full max-w-xl">
-      {/* Input pencarian */}
       <div className="relative flex-1 w-full">
         <input
           type="text"
@@ -46,7 +42,6 @@ export default function PakanFilterBar({ search, setSearch, filterJenis, setFilt
         <FaSearch className="absolute top-2.5 left-3 text-gray-400 text-sm" />
       </div>
 
-      {/* Custom Dropdown filter jenis */}
       <div className="relative w-48" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}

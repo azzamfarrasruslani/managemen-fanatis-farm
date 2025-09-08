@@ -1,21 +1,25 @@
 'use client';
 
-export default function StatCard({ title, value, icon }) {
+export default function StatCard({ title, value, icon, color = "green" }) {
+  const bgColor = {
+    green: "bg-green-100 text-green-800",
+    yellow: "bg-yellow-100 text-yellow-800",
+    emerald: "bg-emerald-100 text-emerald-800",
+    lime: "bg-lime-100 text-lime-800",
+    gray: "bg-gray-100 text-gray-800",
+  };
+
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-transparent flex items-center gap-5">
+    <div className="bg-white border rounded-xl p-4 shadow-sm flex items-center gap-4">
       {/* Icon */}
-      <div className="bg-green-100 text-green-600 p-4 rounded-full text-2xl shadow-inner">
+      <div className={`h-12 w-12 flex items-center justify-center rounded-lg text-2xl ${bgColor[color]}`}>
         {icon}
       </div>
 
       {/* Text Content */}
       <div className="flex flex-col">
-        <span className="text-sm text-green-700 font-semibold tracking-wide">
-          {title}
-        </span>
-        <span className="text-2xl font-extrabold text-green-900 leading-tight">
-          {value}
-        </span>
+        <span className="text-sm text-gray-600 font-medium">{title}</span>
+        <span className="text-xl font-bold text-gray-800">{value}</span>
       </div>
     </div>
   );

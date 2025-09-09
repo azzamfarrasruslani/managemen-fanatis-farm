@@ -7,6 +7,7 @@ import {
   FaCheckCircle,
   FaEgg
 } from 'react-icons/fa';
+import { GiDuck } from 'react-icons/gi';
 import { supabase } from '@/lib/supabaseClient';
 import KandangHeader from './components/KandangHeader';
 import StatCard from './components/StatCard';
@@ -55,7 +56,7 @@ export default function KandangPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Total Kandang" value={totalKandang} icon={<FaWarehouse />} color="green" />
-        <StatCard title="Jumlah Bebek" value={`${totalBebek} Ekor`} icon={<FaDrumstickBite />} color="lime" />
+        <StatCard title="Jumlah Bebek" value={`${totalBebek} Ekor`} icon={<GiDuck />} color="lime" />
         <StatCard title="Kandang Aktif" value={`${aktifKandang} Kandang`} icon={<FaCheckCircle />} color="emerald" />
         <StatCard title="Kandang Bertelur" value={`${kandangBertelur} Kandang`} icon={<FaEgg />} color="yellow" />
       </div>
